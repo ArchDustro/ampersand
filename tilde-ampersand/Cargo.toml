@@ -1,0 +1,9 @@
+[package]
+name = "tilde-ampersand"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+gdk = "0.18.2"
+glib = "0.22.7"
+gtk = "0.18.2"
