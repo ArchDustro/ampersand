@@ -1,28 +1,40 @@
 use gtk::prelude::*;
 use gtk::{Box,Orientation};
-use crate::box_items::*;
 
-enum AmpContainerOrientation {
+// I obviously don't really understand how importing works in Rust.
+// This just looks weird af to me.
+use crate::box_items::*;
+use label::*;
+
+// Now I'll tell you now,
+// out of everything I have coded or done coding for,
+// there is nothing worse than error handling.
+// I fucking hate error handling.
+use crate::Error;
+
+#[derive(Copy, Clone)]
+enum ContainerOrientation {
     Vertical,
     Horizontal,
 }
 
-struct AmpContainer {
+#[derive( Clone)]
+struct Container {
     container: Box,
-    orientation: AmpContainerOrientation,
+    orientation: ContainerOrientation,
 }
 
-impl AmpContainer {
-    fn new(orientation: AmpContainerOrientation, child_spacing: u16) -> AmpContainer {
-        AmpContainer {
+impl Container {
+    fn new(orientation: ContainerOrientation, child_spacing: u16) -> Container {
+        Container {
             container: Box::new(match orientation {
-                AmpContainerOrientation::Vertical => Orientation::Vertical,
-                AmpContainerOrientation::Horizontal => Orientation::Horizontal
+                ContainerOrientation::Vertical => Orientation::Vertical,
+                ContainerOrientation::Horizontal => Orientation::Horizontal
             }, child_spacing.into()),
             orientation: orientation,
         }
     }
-    fn get_orientation(&self) -> AmpContainerOrientation {
+    fn get_orientation(&self) -> ContainerOrientation {
         self.orientation
     }
     fn pad(&self, north: u16, east: u16, south: u16, west: u16) {
@@ -31,7 +43,8 @@ impl AmpContainer {
         self.container.set_margin_bottom(south.into());
         self.container.set_margin_start(west.into());
     }
-    fn add_label(&self, text: &str) {
-        
+    fn add_label(self, text: &str, wrap_mode: AmpersandWrapMode, chars_per_line: i32) -> Result<AmpersandLabel, Error> {
+        let label = AmpersandLabel::new(text, wrap_mode, chars_per_line);
+        Ok(label)
     }
 }

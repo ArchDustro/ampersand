@@ -1,6 +1,14 @@
 use gtk::builders::*;
 use gtk::prelude::*;
-use gtk::{Application,Box,Orientation,Label};
+use gtk::{Application,Box,Orientation};
+
+use crate::box_items::*;
+use label::*;
+
+// Now I'll tell you now,
+// out of everything I have coded or done coding for,
+// there is nothing worse than error handling.
+// I fucking hate error handling.
 
 enum AmpersandBoxOrientation {
     Vertical,
@@ -15,10 +23,6 @@ struct AmpersandAppBuilder {
 struct AmpersandBox {
     a_box: Box,
     orientation: AmpersandBoxOrientation,
-}
-
-struct ABoxLabel {
-    label: Label,
 }
 
 struct AmpersandApp {
@@ -58,13 +62,15 @@ impl AmpersandBox {
         self.a_box.set_margin_bottom(south.into());
         self.a_box.set_margin_start(west.into());
     }
-    fn add_label(self, text: &str, ) ->  ABoxLabel {
-        
+    fn add_label(self, text: &str, wrap_mode: AmpersandWrapMode, chars_per_line: i32) -> Result<AmpersandLabel, Error> {
+        let label = AmpersandLabel::new(text, wrap_mode, chars_per_line);
+
+        Ok(label)
     }
 }
 
 impl AmpersandApp {
     fn add_box() {
-
+        println!("Howdy")
     }
 }

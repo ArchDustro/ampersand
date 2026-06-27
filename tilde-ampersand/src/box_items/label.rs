@@ -1,25 +1,30 @@
 use gtk::prelude::*;
 use gtk::{Label,pango,TextDirection};
 
-enum AmpersandWrapMode {
+// I don't know if I should be doing this Copy/Clone thing but its useful to me and I don't know of a better alternative.
+#[derive(Copy, Clone)]
+pub enum AmpersandWrapMode {
     Word,
     Char,
     WordChar,
     None
 }
-enum AmpersandLabelDirection {
+
+#[derive(Copy, Clone)]
+pub enum AmpersandLabelDirection {
     RightToLeft,
     LeftToRight,
     None,
 }
 
-struct AmpersandLabel {
+#[derive(Clone)]
+pub struct AmpersandLabel {
     label: Label,
     wrap_mode: AmpersandWrapMode,
 }
 
 impl AmpersandLabel {
-    fn new(text: &str, wrap_mode: AmpersandWrapMode, num_chars_per_line: i32) -> AmpersandLabel {
+    pub fn new(text: &str, wrap_mode: AmpersandWrapMode, num_chars_per_line: i32) -> AmpersandLabel {
         let label = Label::new(Some(text));
 
         label.set_max_width_chars(num_chars_per_line);
@@ -47,7 +52,7 @@ impl AmpersandLabel {
             wrap_mode: wrap_mode,
         }
     }
-    fn set_line_wrap(&mut self, wrap_mode: AmpersandWrapMode) {
+    pub fn set_line_wrap(&mut self, wrap_mode: AmpersandWrapMode) {
         match wrap_mode {
             AmpersandWrapMode::Word => {
                 self.label.set_line_wrap(true);
@@ -67,10 +72,14 @@ impl AmpersandLabel {
         }
         self.wrap_mode = wrap_mode;
     }
-    fn set_text(&mut self, text: &str) {
+
+    // Set or change the text on the label
+    pub fn set_text(&mut self, text: &str) {
         self.label.set_text(text);
     }
-    fn set_direction(&mut self, direction: AmpersandLabelDirection) {
+
+    // For different languages, glyphs may be drawn in different directions.
+    pub fn set_direction(&mut self, direction: AmpersandLabelDirection) {
         match direction {
             AmpersandLabelDirection::LeftToRight => self.label.set_direction(TextDirection::Ltr),
             AmpersandLabelDirection::RightToLeft => self.label.set_direction(TextDirection::Rtl),
