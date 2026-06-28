@@ -25,7 +25,8 @@ impl AppBuilder {
     }
     pub fn build(self) -> App {
         App {
-            application: self.builder.build()
+            application: self.builder.build(),
+            windows: Vec::new(),
         }
     }
 }

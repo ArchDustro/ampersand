@@ -25,7 +25,6 @@ pub struct Label {
 
 pub struct LabelLayout {
     expand: bool,
-    
 }
 
 impl Label {
