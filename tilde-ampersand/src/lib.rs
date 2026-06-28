@@ -1,13 +1,14 @@
-mod window;
-mod box_items;
+mod container_items;
 mod app;
 mod container;
+mod builders;
+mod window;
 
-// Too little code for its own file so I'll just slap it here.
-// I'm a genius programmer, I know.
-pub enum Error {
-    Message(String),
-    Code(u32)
-}
+
 
 // "Never trust a man who doesn't curse."
+//              - A post on some LinkedIn profile by the guy who owned the 
+//                company I reached out to asking if I could have the
+//                'ampersand' namespace on crates.io
+//                
+//                Spoiler alert: he said no. :C

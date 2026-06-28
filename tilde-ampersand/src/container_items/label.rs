@@ -1,9 +1,9 @@
 use gtk::prelude::*;
-use gtk::{Label,pango,TextDirection};
+use gtk::*;
 
 // I don't know if I should be doing this Copy/Clone thing but its useful to me and I don't know of a better alternative.
 #[derive(Copy, Clone)]
-pub enum AmpersandWrapMode {
+pub enum WrapMode {
     Word,
     Char,
     WordChar,
@@ -11,62 +11,73 @@ pub enum AmpersandWrapMode {
 }
 
 #[derive(Copy, Clone)]
-pub enum AmpersandLabelDirection {
+pub enum LabelDirection {
     RightToLeft,
     LeftToRight,
     None,
 }
 
 #[derive(Clone)]
-pub struct AmpersandLabel {
-    label: Label,
-    wrap_mode: AmpersandWrapMode,
+pub struct Label {
+    pub label: gtk::Label,
+    pub wrap_mode: WrapMode,
 }
 
-impl AmpersandLabel {
-    pub fn new(text: &str, wrap_mode: AmpersandWrapMode, num_chars_per_line: i32) -> AmpersandLabel {
-        let label = Label::new(Some(text));
+pub struct LabelLayout {
+    expand: bool,
+    
+}
+
+impl Label {
+    // We call this function to create or get a new label.
+    pub fn new(text: &str, wrap_mode: WrapMode, num_chars_per_line: i32) -> Label {
+        let label = gtk::Label::new(Some(text));
 
         label.set_max_width_chars(num_chars_per_line);
 
         match wrap_mode {
-            AmpersandWrapMode::Word => {
+            WrapMode::Word => {
                 label.set_line_wrap(true);
                 label.set_line_wrap_mode(pango::WrapMode::Word);
             }
-            AmpersandWrapMode::Char => {
+            WrapMode::Char => {
                 label.set_line_wrap(true);
                 label.set_line_wrap_mode(pango::WrapMode::Char);
             }
-            AmpersandWrapMode::WordChar => {
+            WrapMode::WordChar => {
                 label.set_line_wrap(true);
                 label.set_line_wrap_mode(pango::WrapMode::WordChar);
             }
-            AmpersandWrapMode::None => {
+            WrapMode::None => {
                 label.set_line_wrap(false);
             }
         }
 
-        AmpersandLabel {
+        Label {
             label: label,
             wrap_mode: wrap_mode,
         }
     }
-    pub fn set_line_wrap(&mut self, wrap_mode: AmpersandWrapMode) {
+
+    // This sets the line wrap of the text on the labels.
+    pub fn set_line_wrap(&mut self, wrap_mode: WrapMode, chars_per_line: Option<i32>) {
+        if let Some(chars) = chars_per_line {
+            self.label.set_max_width_chars(chars);
+        }
         match wrap_mode {
-            AmpersandWrapMode::Word => {
+            WrapMode::Word => {
                 self.label.set_line_wrap(true);
                 self.label.set_line_wrap_mode(pango::WrapMode::Word);
             }
-            AmpersandWrapMode::Char => {
+            WrapMode::Char => {
                 self.label.set_line_wrap(true);
                 self.label.set_line_wrap_mode(pango::WrapMode::Char);
             }
-            AmpersandWrapMode::WordChar => {
+            WrapMode::WordChar => {
                 self.label.set_line_wrap(true);
                 self.label.set_line_wrap_mode(pango::WrapMode::WordChar);
             }
-            AmpersandWrapMode::None => {
+            WrapMode::None => {
                 self.label.set_line_wrap(false);
             }
         }
@@ -79,12 +90,12 @@ impl AmpersandLabel {
     }
 
     // For different languages, glyphs may be drawn in different directions.
-    pub fn set_direction(&mut self, direction: AmpersandLabelDirection) {
+    pub fn set_direction(&mut self, direction: LabelDirection) {
         match direction {
-            AmpersandLabelDirection::LeftToRight => self.label.set_direction(TextDirection::Ltr),
-            AmpersandLabelDirection::RightToLeft => self.label.set_direction(TextDirection::Rtl),
+            LabelDirection::LeftToRight => self.label.set_direction(TextDirection::Ltr),
+            LabelDirection::RightToLeft => self.label.set_direction(TextDirection::Rtl),
 
-            AmpersandLabelDirection::None => self.label.set_direction(TextDirection::None),
+            LabelDirection::None => self.label.set_direction(TextDirection::None),
         }
     }
 

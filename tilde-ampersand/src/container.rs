@@ -3,29 +3,33 @@ use gtk::{Box,Orientation};
 
 // I obviously don't really understand how importing works in Rust.
 // This just looks weird af to me.
-use crate::box_items::*;
+use crate::container_items::*;
 use label::*;
 
 // Now I'll tell you now,
 // out of everything I have coded or done coding for,
 // there is nothing worse than error handling.
 // I fucking hate error handling.
-use crate::Error;
 
 #[derive(Copy, Clone)]
-enum ContainerOrientation {
+pub enum ContainerOrientation {
     Vertical,
     Horizontal,
 }
 
-#[derive( Clone)]
-struct Container {
-    container: Box,
-    orientation: ContainerOrientation,
+pub enum PackOrder {
+    Start,
+    End,
+}
+
+#[derive(Clone)]
+pub struct Container {
+    pub container: Box,
+    pub orientation: ContainerOrientation,
 }
 
 impl Container {
-    fn new(orientation: ContainerOrientation, child_spacing: u16) -> Container {
+    pub fn new(orientation: ContainerOrientation, child_spacing: u16) -> Container {
         Container {
             container: Box::new(match orientation {
                 ContainerOrientation::Vertical => Orientation::Vertical,
@@ -34,17 +38,37 @@ impl Container {
             orientation: orientation,
         }
     }
-    fn get_orientation(&self) -> ContainerOrientation {
+
+    // Set/get the spacing between the children.
+    pub fn set_spacing(&self, spacing_px: u16){
+        self.container.set_spacing(spacing_px.into());
+    }
+    pub fn get_spacing(&self) -> i32{
+        self.container.spacing()
+    }
+
+    // Get the container orientation.
+    pub fn get_orientation(&self) -> ContainerOrientation {
         self.orientation
     }
-    fn pad(&self, north: u16, east: u16, south: u16, west: u16) {
+
+    // Pads children from the sides of the box.
+    pub fn pad(&self, north: u16, east: u16, south: u16, west: u16) {
         self.container.set_margin_top(north.into());
         self.container.set_margin_end(east.into());
         self.container.set_margin_bottom(south.into());
         self.container.set_margin_start(west.into());
     }
-    fn add_label(self, text: &str, wrap_mode: AmpersandWrapMode, chars_per_line: i32) -> Result<AmpersandLabel, Error> {
-        let label = AmpersandLabel::new(text, wrap_mode, chars_per_line);
-        Ok(label)
+
+    // Adds a text label.
+    pub fn add_label(
+            self, 
+            text: &str, 
+            wrap_mode: WrapMode, 
+            chars_per_line: i32, 
+            padding_px: u32,
+        ) {
+        let label = Label::new(text, wrap_mode, chars_per_line);
+        self.container.pack_start(&label.label, false, false, padding_px);
     }
 }
