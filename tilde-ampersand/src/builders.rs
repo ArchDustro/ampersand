@@ -1,3 +1,4 @@
+use gdk;
 use gtk::builders;
 use gtk::Application;
 use gtk::ApplicationWindow;
@@ -14,10 +15,14 @@ pub struct AppBuilder {
 pub struct WindowBuilder {
     pub builder: builders::ApplicationWindowBuilder,
     pub title: String,
+    pub behavior: crate::window::WindowBehavior,
 }
 
 impl AppBuilder {
     pub fn new(app_id: &str) -> AppBuilder {
+        // Set the program class before creating windows so WM_CLASS is stable.
+        gdk::set_program_class("tilde-ampersand");
+
         AppBuilder {
             builder: Application::builder().application_id(app_id),
             app_id: app_id.to_string()
@@ -26,19 +31,32 @@ impl AppBuilder {
     pub fn build(self) -> App {
         App {
             application: self.builder.build(),
-            windows: Vec::new(),
         }
     }
 }
 
 impl WindowBuilder {
     pub fn new(app: &App, title: String) -> WindowBuilder {
-        let window = ApplicationWindow::builder()
-            .application(&app.application)
-            .title(&title);
-        WindowBuilder { builder: window, title }
-
+        Self::new_from_app(&app.application, title)
     }
+
+    pub fn new_from_app(gtk_app: &gtk::Application, title: String) -> WindowBuilder {
+        let window = ApplicationWindow::builder()
+            .application(gtk_app)
+            .title(&title)
+            .type_hint(gdk::WindowTypeHint::Normal);
+        WindowBuilder { 
+            builder: window, 
+            title,
+            behavior: crate::window::WindowBehavior::Tiled, // Default to tiled for BSPWM
+        }
+    }
+    
+    pub fn set_behavior(mut self, behavior: crate::window::WindowBehavior) -> Self {
+        self.behavior = behavior;
+        self
+    }
+    
     pub fn set_decorated(mut self, is_decorated:bool, show_in_taskbar:bool) -> Self {
         self.builder = self.builder
             .decorated(is_decorated)
@@ -56,9 +74,12 @@ impl WindowBuilder {
     }
 
     pub fn build(self) -> Window {
-        Window {
+        let window = Window {
             window: self.builder.build(),
-        }
+            behavior: self.behavior,
+        };
+        window.apply_behavior();
+        window
     }
     
 }

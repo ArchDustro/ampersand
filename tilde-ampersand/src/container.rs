@@ -67,8 +67,9 @@ impl Container {
             wrap_mode: WrapMode, 
             chars_per_line: i32, 
             padding_px: u32,
-        ) {
+        ) -> label::Label{
         let label = Label::new(text, wrap_mode, chars_per_line);
         self.container.pack_start(&label.label, false, false, padding_px);
+        label
     }
 }
