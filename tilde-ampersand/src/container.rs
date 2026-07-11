@@ -5,6 +5,7 @@ use gtk::{Box,Orientation};
 // This just looks weird af to me.
 use crate::container_items::*;
 use label::*;
+use button::*;
 
 // Now I'll tell you now,
 // out of everything I have coded or done coding for,
@@ -62,14 +63,24 @@ impl Container {
 
     // Adds a text label.
     pub fn add_label(
-            self, 
+            &self, 
             text: &str, 
             wrap_mode: WrapMode, 
             chars_per_line: i32, 
             padding_px: u32,
         ) -> label::Label{
         let label = Label::new(text, wrap_mode, chars_per_line);
-        self.container.pack_start(&label.label, false, false, padding_px);
+        self.container.pack_start(&label.label, true, true, padding_px);
         label
     }
+
+    // Adds a interactable button
+    pub fn add_buttom(&self,
+        text: &str,
+        on_click: std::boxed::Box<dyn Fn()>,
+        padding_px: u32) -> button::Button {
+            let button = Button::new(text, on_click);
+            self.container.pack_start(&button.button, true, true, padding_px);
+            button
+        }
 }

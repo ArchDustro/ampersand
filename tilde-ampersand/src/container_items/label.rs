@@ -16,6 +16,12 @@ pub enum LabelDirection {
     LeftToRight,
     None,
 }
+pub enum Alignment {
+    // haha im australian so i spell it 'centre'
+    Centre,
+    End,
+    Start
+}
 
 #[derive(Clone)]
 pub struct Label {
@@ -84,7 +90,7 @@ impl Label {
     }
 
     // Set or change the text on the label
-    pub fn set_text(&mut self, text: &str) {
+    pub fn set_text(&self, text: &str) {
         self.label.set_text(text);
     }
 
@@ -98,4 +104,20 @@ impl Label {
         }
     }
 
+    pub fn set_alignment(&self, alignment: Alignment) {
+        match alignment {
+            Alignment::Centre => {
+                self.label.set_justify(gtk::Justification::Center);
+                self.label.set_xalign(0.5);
+            }
+            Alignment::Start => {
+                self.label.set_justify(gtk::Justification::Left);
+                self.label.set_xalign(0.0);
+            }
+            Alignment::End => {
+                self.label.set_justify(gtk::Justification::Right);
+                self.label.set_xalign(1.0);
+            }
+        }
+    }
 }

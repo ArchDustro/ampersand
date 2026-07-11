@@ -4,7 +4,6 @@ use std::boxed::Box;
 
 pub struct Button {
     pub button: gtk::Button,
-    pub on_click: Box<dyn Fn()>,
 }
 
 pub enum Position {
@@ -15,22 +14,16 @@ pub enum Position {
 }
 
 impl Button {
-    pub fn new(label: &str, on_click: Box<dyn Fn()>) -> Button {
+    pub fn new(label: &str, on_click: Box<dyn Fn() + 'static>) -> Button {
         let button = gtk::Button::with_label(label);
-        Button { button, on_click }
-    }
 
-    pub fn set_on_click(&mut self, on_click: Box<dyn Fn()>) -> &mut Self {
-        self.on_click = on_click;
-        self
-    }
-
-    pub fn clicked(&mut self) {
-        let callback = std::mem::replace(&mut self.on_click, Box::new(|| {}));
-        self.button.connect_clicked(move |_| {
-            callback();
+        button.connect_clicked(move |_| {
+            on_click();
         });
+
+        Button { button }
     }
+
     pub fn set_label(&self, new_label: &str) -> &Self {
         self.button.set_label(new_label);
         self
